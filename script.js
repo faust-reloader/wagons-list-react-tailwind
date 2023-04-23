@@ -1,27 +1,30 @@
-const fakeThead = document.querySelector('#fake-thead');
-const scrollableDiv = document.querySelector('#scrollable-div');
-const { offsetHeight: theadHeight } = document.querySelector('table thead');
+const fakeThead = $('#fake-thead');
+const scrollableDiv = $('#scrollable-div');
+const theadHeight = $('table thead').outerHeight();
 
-const { offsetTop: scrollableDivTop, offsetHeight: scrollableDivHeight } = scrollableDiv;
+const scrollableDivTop = scrollableDiv.offset().top;
+const scrollableDivHeight = scrollableDiv.outerHeight();
 const scrollableDivBottom = scrollableDivTop + scrollableDivHeight;
 
-window.addEventListener('scroll', () => {
-  const isScrolledIntoView = window.scrollY > scrollableDivTop && window.scrollY < scrollableDivBottom;
-  fakeThead.classList.toggle('hidden', !isScrolledIntoView);
+$(window).on('scroll', () => {
+  const isScrolledIntoView = $(window).scrollTop() > scrollableDivTop && $(window).scrollTop() < scrollableDivBottom;
+  fakeThead.toggleClass('hidden', !isScrolledIntoView);
   if (isScrolledIntoView) {
-    fakeThead.classList.remove('hidden');
-    fakeThead.style.width = scrollableDiv.clientWidth;
-    fakeThead.style.top = theadHeight;
-    fakeThead.style.height = theadHeight;
-    fakeThead.style.margin = '-' + theadHeight + ' auto';
-    fakeThead.innerHTML = scrollableDiv.innerHTML;
+    fakeThead.removeClass('hidden');
+    fakeThead.css({
+      width: scrollableDiv.innerWidth(),
+      top: theadHeight,
+      height: theadHeight,
+      margin: '-' + theadHeight + ' auto'
+    });
+    fakeThead.html(scrollableDiv.html());
   }
 });
 
-scrollableDiv.addEventListener('scroll', () => {
-  fakeThead.scrollLeft = scrollableDiv.scrollLeft;
+scrollableDiv.on('scroll', () => {
+  fakeThead.scrollLeft(scrollableDiv.scrollLeft());
 });
 
-window.addEventListener('resize', () => {
-  window.dispatchEvent(new Event('scroll'));
+$(window).on('resize', () => {
+  $(window).trigger('scroll');
 });
